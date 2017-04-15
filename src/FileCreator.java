@@ -88,34 +88,31 @@ public class FileCreator {
                 String path = fPath.getText();
                 String size = fSize.getText();
                 File file = new File(path);
-                try {
-                    file.createNewFile();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                try {
+                File directory = new File(file.getParent());
+                boolean dirCreated = directory.mkdirs();
+                    try {
+                        file.createNewFile();
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, "Can not create file");
+                    }
 
                    try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
                         //raf.setLength(Long.valueOf(size).longValue());
 
-                        for (long i = 1; i <= ((Long.valueOf(size).longValue())*multiplyValue); i++)
-                        {
-                            raf.write(1);
-                        }
+                        for (long i = 1; i <= ((Long.valueOf(size))*multiplyValue); i++)
+                            raf.writeByte(1);
 
-                    }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+                    } catch (FileNotFoundException e1) {
+                       JOptionPane.showMessageDialog(null, "File is not found");
+                   } catch (IOException e1) {
+                       JOptionPane.showMessageDialog(null, "Input/ouput error");
+                   }
+
                 JOptionPane.showMessageDialog(null,"File created at " + path);
 
             }
             }
         );
-        /*final DefaultComboBoxModel fDimension = new DefaultComboBoxModel();
-        fDimension.addElement("MBytes");
-        fDimension.addElement("KBytes");
-        fDimension.addElement("Bytes");*/
         String[] fDimension = {"MBytes", "KBytes", "Bytes"};
         final JComboBox fileSizeDim = new JComboBox(fDimension);
         fileSizeDim.setBorder(new EmptyBorder(0,5,0,5));
@@ -133,7 +130,7 @@ public class FileCreator {
                 {
                     multiplyValue = 1024*1024;
                 }
-                else
+                else if (value.equals("KBytes"))
                 {
                     multiplyValue = 1024;
                 }
