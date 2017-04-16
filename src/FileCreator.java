@@ -18,11 +18,12 @@ public class FileCreator {
     private JPanel footer;
     private JLabel header;
     private int multiplyValue = 1;
+    private JProgressBar bar;
     public FileCreator()
     {
         mainFrame = new JFrame("File creator tool");
-        mainFrame.setSize(600,150);
-        mainFrame.setLayout(new GridLayout(3,1));
+        mainFrame.setSize(600,200);
+        mainFrame.setLayout(new GridLayout(4,1));
         mainFrame.getRootPane().setBorder(BorderFactory.createMatteBorder(4,4,4,4, Color.LIGHT_GRAY));
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setResizable(false);
@@ -68,10 +69,15 @@ public class FileCreator {
         controlPanel.setBorder(new EmptyBorder(0,10,0,10));
         header = new JLabel("Welcome to file creation tool.",SwingConstants.CENTER);
         //JLabel footer = new JLabel("",SwingConstants.CENTER);
+        //
+        bar = new JProgressBar(0,100);
+        bar.setStringPainted(true);
+        bar.setVisible(false);
         footer = new JPanel(new FlowLayout());
         mainFrame.add(header);
         mainFrame.add(controlPanel);
         mainFrame.add(footer);
+        mainFrame.add(bar);
 
 
     }
@@ -102,6 +108,7 @@ public class FileCreator {
                                                 public void run() {
                                                     try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
                                                         header.setText("I'm creating file.....");
+                                                        bar.setVisible(true);
                                                         for (long i = 1; i <= ((Long.valueOf(size)) * multiplyValue); i++) {
                                                             raf.write(0);
                                                         }
@@ -113,23 +120,10 @@ public class FileCreator {
                                                         public void run() {
                                                             header.setText("File created at " + path);
                                                             JOptionPane.showMessageDialog(null, "File has been created");
+                                                            bar.setVisible(false);
                                                         }
                                                     });
-                           /* try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
-                        //raf.setLength(Long.valueOf(size).longValue());
-
-                        for (long i = 1; i <= ((Long.valueOf(size)) * multiplyValue); i++) {
-                            raf.write(0);
-                        }
-
-                        JOptionPane.showMessageDialog(null, "File created at " + path);
-                    }
-                     catch (FileNotFoundException e1) {
-                        JOptionPane.showMessageDialog(null, "File is not found");
-                    } catch (IOException e1) {
-                        JOptionPane.showMessageDialog(null, "Input/ouput error");
-                    }*/
-                                                }
+                                              }
                                             };
                                             worker.start();
                                         }
