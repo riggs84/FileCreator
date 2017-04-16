@@ -16,8 +16,8 @@ public class FileCreator {
     private JFrame mainFrame;
     private JPanel controlPanel;
     private JPanel footer;
+    private JLabel header;
     private int multiplyValue = 1;
-    //private JPanel footer;
     public FileCreator()
     {
         mainFrame = new JFrame("File creator tool");
@@ -66,12 +66,13 @@ public class FileCreator {
         controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.X_AXIS));
         controlPanel.setBorder(new EmptyBorder(0,10,0,10));
-        JLabel header = new JLabel("Welcome to file creation tool.",SwingConstants.CENTER);
+        header = new JLabel("Welcome to file creation tool.",SwingConstants.CENTER);
         //JLabel footer = new JLabel("",SwingConstants.CENTER);
         footer = new JPanel(new FlowLayout());
         mainFrame.add(header);
         mainFrame.add(controlPanel);
         mainFrame.add(footer);
+
 
     }
     private void start()
@@ -84,39 +85,56 @@ public class FileCreator {
         JTextField fSize = new JTextField();
         JButton createBtn = new JButton("Create");
         createBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String path = fPath.getText();
-                String size = fSize.getText();
-                File file = new File(path);
-                File directory = new File(file.getParent());
-                boolean dirCreated = directory.mkdirs();
-                    try {
-                        file.createNewFile();
-                    } catch (IOException e1) {
-                        JOptionPane.showMessageDialog(null, "Can not create file");
-                    }
+                                        @Override
+                                        public void actionPerformed(ActionEvent e) {
+                                            String path = fPath.getText();
+                                            String size = fSize.getText();
+                                            File file = new File(path);
+                                            File directory = new File(file.getParent());
+                                            boolean dirCreated = directory.mkdirs();
+                                            try {
+                                                file.createNewFile();
+                                            } catch (IOException e1) {
+                                                JOptionPane.showMessageDialog(null, "Can not create file");
+                                            }
 
-                       try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
-                           //raf.setLength(Long.valueOf(size).longValue());
+                                            Thread worker = new Thread() {
+                                                public void run() {
+                                                    try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
+                                                        header.setText("I'm creating file.....");
+                                                        for (long i = 1; i <= ((Long.valueOf(size)) * multiplyValue); i++) {
+                                                            raf.write(0);
+                                                        }
+                                                    } catch (Exception e1) {
+                                                        JOptionPane.showMessageDialog(null, "Thread input/output error");
+                                                    }
+                                                    SwingUtilities.invokeLater(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            header.setText("File created at " + path);
+                                                            JOptionPane.showMessageDialog(null, "File has been created");
+                                                        }
+                                                    });
+                           /* try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
+                        //raf.setLength(Long.valueOf(size).longValue());
 
-                           for (long i = 1; i <= ((Long.valueOf(size)) * multiplyValue); i++) {
-                               raf.write(0);
-                           }
+                        for (long i = 1; i <= ((Long.valueOf(size)) * multiplyValue); i++) {
+                            raf.write(0);
+                        }
 
-                           JOptionPane.showMessageDialog(null, "File created at " + path);
+                        JOptionPane.showMessageDialog(null, "File created at " + path);
                     }
                      catch (FileNotFoundException e1) {
-                       JOptionPane.showMessageDialog(null, "File is not found");
-                   } catch (IOException e1) {
-                       JOptionPane.showMessageDialog(null, "Input/ouput error");
-                   }
+                        JOptionPane.showMessageDialog(null, "File is not found");
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(null, "Input/ouput error");
+                    }*/
+                                                }
+                                            };
+                                            worker.start();
+                                        }
+                                    });
 
-
-
-            }
-            }
-        );
         String[] fDimension = {"MBytes", "KBytes", "Bytes"};
         final JComboBox fileSizeDim = new JComboBox(fDimension);
         fileSizeDim.setBorder(new EmptyBorder(0,5,0,5));
