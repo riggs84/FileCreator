@@ -16,7 +16,7 @@ public class FileCreator {
     private JFrame mainFrame;
     private JPanel controlPanel;
     private JPanel footer;
-    private int multiplyValue;
+    private int multiplyValue = 1;
     //private JPanel footer;
     public FileCreator()
     {
@@ -25,6 +25,7 @@ public class FileCreator {
         mainFrame.setLayout(new GridLayout(3,1));
         mainFrame.getRootPane().setBorder(BorderFactory.createMatteBorder(4,4,4,4, Color.LIGHT_GRAY));
         mainFrame.setLocationRelativeTo(null);
+        mainFrame.setResizable(false);
         mainFrame.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent e) {
@@ -96,19 +97,22 @@ public class FileCreator {
                         JOptionPane.showMessageDialog(null, "Can not create file");
                     }
 
-                   try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
-                        //raf.setLength(Long.valueOf(size).longValue());
+                       try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
+                           //raf.setLength(Long.valueOf(size).longValue());
 
-                        for (long i = 1; i <= ((Long.valueOf(size))*multiplyValue); i++)
-                            raf.writeByte(1);
+                           for (long i = 1; i <= ((Long.valueOf(size)) * multiplyValue); i++) {
+                               raf.write(0);
+                           }
 
-                    } catch (FileNotFoundException e1) {
+                           JOptionPane.showMessageDialog(null, "File created at " + path);
+                    }
+                     catch (FileNotFoundException e1) {
                        JOptionPane.showMessageDialog(null, "File is not found");
                    } catch (IOException e1) {
                        JOptionPane.showMessageDialog(null, "Input/ouput error");
                    }
 
-                JOptionPane.showMessageDialog(null,"File created at " + path);
+
 
             }
             }
@@ -122,11 +126,11 @@ public class FileCreator {
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
                 String value = (String) combo.getSelectedItem();
-                if (value.equals("Bytes"))
+                /*if (value.equals("Bytes"))
                 {
                     multiplyValue = 1;
-                }
-                else if (value.equals("MBytes"))
+                }*/
+                if (value.equals("MBytes"))
                 {
                     multiplyValue = 1024*1024;
                 }
