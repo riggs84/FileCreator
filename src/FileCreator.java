@@ -73,6 +73,8 @@ public class FileCreator {
         //
         bar = new JProgressBar(0,100);
         bar.setStringPainted(true);
+        bar.setForeground(Color.GREEN);
+        bar.setBackground(Color.WHITE);
         bar.setVisible(false);
         footer = new JPanel(new FlowLayout());
         mainFrame.add(header);
