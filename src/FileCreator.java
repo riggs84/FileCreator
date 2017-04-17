@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by MartinRiggs on 4/14/2017.
@@ -109,8 +110,14 @@ public class FileCreator {
                                                     try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
                                                         header.setText("I'm creating file.....");
                                                         bar.setVisible(true);
-                                                        for (long i = 1; i <= ((Long.valueOf(size)) * multiplyValue); i++) {
+                                                        long tmp = Long.valueOf(size)*multiplyValue;
+                                                        for (long i = 1; i <= tmp; i++) {
                                                             raf.write(0);
+                                                            double result = (((double)i / tmp)*100);
+                                                            //long result = Math.abs(tmp - i)/tmp;
+                                                            ProgressBarUpdate((int) result);
+                                                            /*bar.setValue(((int) result));
+                                                            bar.updateUI();*/
                                                         }
                                                     } catch (Exception e1) {
                                                         JOptionPane.showMessageDialog(null, "Thread input/output error");
@@ -163,6 +170,23 @@ public class FileCreator {
         footer.add(createBtn);
         mainFrame.setVisible(true);
     }
+
+    private void ProgressBarUpdate(int i)
+    {
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    bar.setValue(i);
+                }
+            });
+        } catch (InterruptedException e) {
+            JOptionPane.showMessageDialog(null, "Progress error occur");
+        } catch (InvocationTargetException e) {
+            JOptionPane.showMessageDialog(null, "Progress bar error occur");
+        }
+    }
+
 
 
 
