@@ -113,13 +113,11 @@ public class FileCreator {
                                                         header.setText("I'm creating file.....");
                                                         bar.setVisible(true);
                                                         long tmp = Long.valueOf(size)*multiplyValue;
+                                                        double result;
                                                         for (long i = 1; i <= tmp; i++) {
                                                             raf.write(0);
-                                                            double result = (((double)i / tmp)*100);
-                                                            //long result = Math.abs(tmp - i)/tmp;
+                                                            result = (((double)i / tmp)*100);
                                                             ProgressBarUpdate((int) result);
-                                                            /*bar.setValue(((int) result));
-                                                            bar.updateUI();*/
                                                         }
                                                     } catch (Exception e1) {
                                                         JOptionPane.showMessageDialog(null, "Thread input/output error");
