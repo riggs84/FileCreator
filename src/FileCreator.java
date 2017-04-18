@@ -105,6 +105,7 @@ public class FileCreator {
                                                 file.createNewFile();
                                             } catch (IOException e1) {
                                                 JOptionPane.showMessageDialog(null, "Can not create file");
+                                                System.exit(1);
                                             }
 
                                             Thread worker = new Thread() {
@@ -112,11 +113,18 @@ public class FileCreator {
                                                     try (RandomAccessFile raf = new RandomAccessFile(path, "rw")) {
                                                         header.setText("I'm creating file.....");
                                                         bar.setVisible(true);
-                                                        long tmp = Long.valueOf(size)*multiplyValue;
-                                                        double result;
-                                                        for (long i = 1; i <= tmp; i++) {
-                                                            raf.write(0);
-                                                            result = (((double)i / tmp)*100);
+                                                        long nBytesTotal = Long.valueOf(size)*multiplyValue;
+                                                        long nBytesRemain = nBytesTotal;
+                                                        final int nBufLen = 32768;
+                                                        byte[] buf = new byte[nBufLen];
+                                                        while (nBytesRemain > 0) {
+                                                            long nBytesToWrite = nBufLen;
+                                                            if (nBufLen > nBytesRemain) {
+                                                                nBytesToWrite = nBytesRemain;
+                                                            }
+                                                            raf.write(buf,0, (int)nBytesToWrite);
+                                                            nBytesRemain -= nBytesToWrite;
+                                                            double result = 100 * (1.0d - (double)nBytesRemain / nBytesTotal);
                                                             ProgressBarUpdate((int) result);
                                                         }
                                                     } catch (Exception e1) {
